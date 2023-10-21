@@ -95,6 +95,27 @@ def sinus(a, frecventa, timp, faza):
 #     plt.imshow(array)
 #     plt.show()
 
+def s_sin(amplitudine, frecv, timp, faza):
+    return amplitudine * numpy.sin(2 * numpy.pi * frecv * timp + faza)
+
+if __name__ == '__main__':
+    # ex2f
+    matr = numpy.zeros((128, 128))
+
+    timp = numpy.linspace(0, 0.03, 128)
+
+    sinValori = (s_sin(1, 100, timp, 0) + 1) * 64
+
+    sinValoriIndici = sinValori.astype(int)
+
+    for i, y in enumerate(sinValoriIndici):
+        if 0 <= y < 128:
+            matr[y, i] = 1
+
+    plt.imshow(matr, cmap='gray')
+    plt.show()
+
+
 
 
 
@@ -168,7 +189,7 @@ def s_cos(amplitudine, frecv, timp, faza):
 #     sd.wait()
 
 if __name__ == '__main__':
-    timp = numpy.linspace(0, 1, 500, endpoint=False)
+    timp = numpy.linspace(0, 1, 50, endpoint=False)
     sinSemnal = sinus(1, 440, timp, 0)
     sawSemnal = sawtooth(2 * numpy.pi * 440 * timp)
 
