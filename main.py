@@ -267,7 +267,7 @@ if __name__ == '__main__':
     axs[2].plot(interval, sinInterval)
 
     for ax in axs:
-        ax.set_yscale("symlog") #symlog sau log?
+        ax.set_yscale("symlog") #symlog sau log? daca folosim log valorile <0 nu vor fi afisate
 
     plt.show()
 
