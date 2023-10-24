@@ -98,22 +98,22 @@ def sinus(a, frecventa, timp, faza):
 def s_sin(amplitudine, frecv, timp, faza):
     return amplitudine * numpy.sin(2 * numpy.pi * frecv * timp + faza)
 
-if __name__ == '__main__':
-    # ex2f
-    matr = numpy.zeros((128, 128))
-
-    timp = numpy.linspace(0, 0.03, 128)
-
-    sinValori = (s_sin(1, 100, timp, 0) + 1) * 64
-
-    sinValoriIndici = sinValori.astype(int)
-
-    for i, y in enumerate(sinValoriIndici):
-        if 0 <= y < 128:
-            matr[y, i] = 1
-
-    plt.imshow(matr, cmap='gray')
-    plt.show()
+# if __name__ == '__main__':
+#     # ex2f
+#     matr = numpy.zeros((128, 128))
+#
+#     timp = numpy.linspace(0, 0.03, 128)
+#
+#     sinValori = (s_sin(1, 100, timp, 0) + 1) * 64
+#
+#     sinValoriIndici = sinValori.astype(int)
+#
+#     for i, y in enumerate(sinValoriIndici):
+#         if 0 <= y < 128:
+#             matr[y, i] = 1
+#
+#     plt.imshow(matr, cmap='gray')
+#     plt.show()
 
 
 
@@ -188,21 +188,93 @@ def s_cos(amplitudine, frecv, timp, faza):
 #     sd.play(semnal, 16000)
 #     sd.wait()
 
+# if __name__ == '__main__':
+#     #Ex 4
+#     timp = numpy.linspace(0, 1, 50, endpoint=False)
+#     sinSemnal = sinus(1, 440, timp, 0)
+#     sawSemnal = sawtooth(2 * numpy.pi * 440 * timp)
+#
+#     semnalTotal = sinSemnal + sawSemnal
+#
+#     print(numpy.sum(semnalTotal))
+#
+#     fig, axs = plt.subplots(3)
+#     axs[0].plot(timp, sinSemnal)
+#     axs[1].plot(timp, sawSemnal)
+#     axs[2].plot(timp, semnalTotal)
+#
+#     plt.show()
+
+# if __name__ == '__main__':
+#     #Ex5
+#     rata1 = numpy.linspace(0, 5, 16000)
+#     rata2 = numpy.linspace(0, 5, 16000)
+#
+#     semnal1 = sinus(1, 4000, rata1, 0)
+#     semnal2 = sinus(1, 8000, rata2, 0)
+#
+#     semnalTotal = numpy.concatenate((semnal1, semnal2))
+#
+#     sd.play(semnalTotal, 16000)
+#     sd.wait()
+#     #sunetul produs de cele doua semnale este diferit
+
+# if __name__ == '__main__':
+#     #Ex6
+#     timp = numpy.linspace(0, 0.05, 500)
+#
+#     semnal1 = sinus(1, 500 / 2, timp, 0)
+#     semnal2 = sinus(1, 500 / 4, timp, 0)
+#     semnal3 = sinus(1, 0, timp, 0)
+#
+#     fig, axs = plt.subplots(3)
+#     axs[0].plot(timp, semnal1)
+#     axs[1].plot(timp, semnal2)
+#     axs[2].plot(timp, semnal3)
+#
+#     plt.show()
+#     #cu cat frecventa este mai mica, cu atat mai putine "cicluri" (bump-uri) sunt
+
+# if __name__ == '__main__':
+#     #Ex7
+#     timp = numpy.linspace(0, 0.05, 500)
+#     timpDecimat1 = timp[::4]
+#     timpDecimat2 = timp[1::4]
+#
+#     semnal1 = sinus(1, 1000, timp, 0)
+#     semnal2 = sinus(1, 1000, timpDecimat1, 0)
+#     semnal3 = sinus(1, 1000, timpDecimat2, 0)
+#
+#     fig, axs = plt.subplots(3)
+#     axs[0].plot(timp, semnal1)
+#     axs[1].plot(timpDecimat1, semnal2)
+#     axs[2].plot(timpDecimat2, semnal3)
+#
+#     plt.show()
+#     #Semnalul 3 arata ca semnalul 2 inversat
+
 if __name__ == '__main__':
-    timp = numpy.linspace(0, 1, 50, endpoint=False)
-    sinSemnal = sinus(1, 440, timp, 0)
-    sawSemnal = sawtooth(2 * numpy.pi * 440 * timp)
+    #Ex 8
+    interval = numpy.linspace(-numpy.pi/2, numpy.pi/2, 1000)
 
-    semnalTotal = sinSemnal + sawSemnal
+    sinInterval = numpy.sin(interval)
 
-    print(numpy.sum(semnalTotal))
+    aproximarePade = (interval - (7 * interval ** 3) / 60) / (1 + (interval ** 2) / 20)
 
     fig, axs = plt.subplots(3)
-    axs[0].plot(timp, sinSemnal)
-    axs[1].plot(timp, sawSemnal)
-    axs[2].plot(timp, semnalTotal)
+    axs[0].plot(interval, interval)
+    axs[1].plot(interval, aproximarePade)
+    axs[2].plot(interval, sinInterval)
+
+    for ax in axs:
+        ax.set_yscale("symlog") #simlog sau log?
 
     plt.show()
+
+
+
+
+
 
 
 
