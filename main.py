@@ -253,23 +253,87 @@ def s_cos(amplitudine, frecv, timp, faza):
 #     plt.show()
 #     #Semnalul 3 arata ca semnalul 2 inversat
 
+# if __name__ == '__main__':
+#     #Ex 8
+#     interval = numpy.linspace(-numpy.pi/2, numpy.pi/2, 1000)
+#
+#     sinInterval = numpy.sin(interval)
+#
+#     aproximarePade = (interval - (7 * interval ** 3) / 60) / (1 + (interval ** 2) / 20)
+#
+#     fig, axs = plt.subplots(3)
+#     axs[0].plot(interval, interval)
+#     axs[1].plot(interval, aproximarePade)
+#     axs[2].plot(interval, sinInterval)
+#
+#     for ax in axs:
+#         ax.set_yscale("symlog") #symlog sau log? daca folosim log valorile <0 nu vor fi afisate
+#
+#     plt.show()
+
+
+
+#Laborator 3
+# if __name__ == '__main__':
+#     #Ex1
+#     N = 6
+#     F = numpy.zeros((N, N), dtype=complex)
+#
+#     for m in range(N):
+#         for k in range(N):
+#             x = -2j * numpy.pi * m * k / N
+#             F[m, k] = numpy.exp(x)
+#
+#     print(F)
+#
+#     plt.figure(figsize=(15, 40))
+#     for m in range(N):
+#         plt.subplot(N, 2, 2 * m + 1)
+#         plt.plot(numpy.real(F[m, :]))
+#         plt.title(f"Linia {m + 1} - real")
+#
+#         plt.subplot(N, 2, 2 * m + 2)
+#         plt.plot(numpy.imag(F[m, :]))
+#         plt.title(f"Linia {m + 1} - imaginar")
+#
+#     plt.tight_layout()
+#     plt.show()
+#
+#     FConj = numpy.conjugate(F.T)  # Matricea conjugată transpusă (hermitiană)
+#     matriceIdentitate = numpy.dot(F, FConj)
+#     # matriceIdentitate ar tb sa aiba 1 pe diagonala si 0 in rest
+#     unitar = numpy.allclose(matriceIdentitate, numpy.eye(N) * N, atol=1e-10)
+#
+#     if unitar:
+#         print("Matricea Fourier este unitară.")
+#     else:
+#         print("Matricea Fourier NU este unitară.")
+
+
 if __name__ == '__main__':
-    #Ex 8
-    interval = numpy.linspace(-numpy.pi/2, numpy.pi/2, 1000)
+    import numpy as np
+    import matplotlib.pyplot as plt
 
-    sinInterval = numpy.sin(interval)
+    # Define your x[n] here:
+    n = np.arange(0, 2 * np.pi, 0.01)  # Sample points
+    a = 3
+    delta = np.pi / 2
+    x = np.cos(a * n + delta)
 
-    aproximarePade = (interval - (7 * interval ** 3) / 60) / (1 + (interval ** 2) / 20)
+    # Compute y[n]
+    y = x * np.exp(-2j * np.pi * n)
 
-    fig, axs = plt.subplots(3)
-    axs[0].plot(interval, interval)
-    axs[1].plot(interval, aproximarePade)
-    axs[2].plot(interval, sinInterval)
-
-    for ax in axs:
-        ax.set_yscale("symlog") #symlog sau log? daca folosim log valorile <0 nu vor fi afisate
-
+    # Plot
+    plt.figure(figsize=(8, 8))
+    plt.plot(np.real(y), np.imag(y), 'b-')
+    plt.scatter(np.real(y), np.imag(y), c='r', s=5)
+    plt.xlabel('Real')
+    plt.ylabel('Imaginar')
+    plt.title('Reprezentarea in planul complex')
+    plt.grid(True)
+    plt.axis('equal')
     plt.show()
+
 
 
 
