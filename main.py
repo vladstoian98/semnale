@@ -310,28 +310,43 @@ def s_cos(amplitudine, frecv, timp, faza):
 #         print("Matricea Fourier NU este unitară.")
 
 
+# if __name__ == '__main__':
+#     #Ex2
+#     nrPuncte = 1000
+#
+#     matr = numpy.linspace(0, 1, nrPuncte)
+#
+#     print(matr)
+#
+#     semnalSin = numpy.sin(2 * 5 * numpy.pi * matr)  # frecventa 5
+#
+#     y = semnalSin * numpy.exp(-2j * numpy.pi * 7 * matr) # omega este 7 in acest caz, pentru a reprezenta graficul 4
+#     # din figura 2; pt graficul 2 din figura 1 trebuie sa alegem omega = 1
+#
+#     r = y.real
+#     i = y.imag
+#
+#     plt.plot(r, i)
+#     plt.xlim(-1, 1)
+#     plt.ylim(-1, 1)
+#     plt.gca().set_aspect('equal', adjustable='box')
+#     plt.show()
+
 if __name__ == '__main__':
-    import numpy as np
-    import matplotlib.pyplot as plt
+    #Ex3
+    N = 1000
+    t = numpy.linspace(0, 1, N, endpoint=False)
+    f1, f2, f3 = 10, 30, 50
 
-    # Define your x[n] here:
-    n = np.arange(0, 2 * np.pi, 0.01)  # Sample points
-    a = 3
-    delta = np.pi / 2
-    x = np.cos(a * n + delta)
+    semnaleConcatenate = numpy.sin(2 * numpy.pi * f1 * t) + numpy.sin(2 * numpy.pi * f2 * t) + numpy.sin(2 * numpy.pi * f3 * t)
 
-    # Compute y[n]
-    y = x * np.exp(-2j * np.pi * n)
+    vect = numpy.zeros(N, complex)
+    for k in range(N):
+        for n in range(N):
+            vect[k] += semnaleConcatenate[n] * numpy.exp(-2j * numpy.pi * k * n / N)
 
-    # Plot
-    plt.figure(figsize=(8, 8))
-    plt.plot(np.real(y), np.imag(y), 'b-')
-    plt.scatter(np.real(y), np.imag(y), c='r', s=5)
-    plt.xlabel('Real')
-    plt.ylabel('Imaginar')
-    plt.title('Reprezentarea in planul complex')
-    plt.grid(True)
-    plt.axis('equal')
+    plt.plot(t, semnaleConcatenate)
+
     plt.show()
 
 
