@@ -322,6 +322,7 @@ def s_cos(amplitudine, frecv, timp, faza):
 #
 #     y = semnalSin * numpy.exp(-2j * numpy.pi * 7 * matr) # omega este 7 in acest caz, pentru a reprezenta graficul 4
 #     # din figura 2; pt graficul 2 din figura 1 trebuie sa alegem omega = 1
+#     # daca frecventa si omega sunt egale se va afisa un cerc
 #
 #     r = y.real
 #     i = y.imag
@@ -336,7 +337,7 @@ if __name__ == '__main__':
     #Ex3
     N = 1000
     t = numpy.linspace(0, 1, N, endpoint=False)
-    f1, f2, f3 = 10, 30, 50
+    f1, f2, f3 = 20, 30, 100
 
     semnaleConcatenate = numpy.sin(2 * numpy.pi * f1 * t) + numpy.sin(2 * numpy.pi * f2 * t) + numpy.sin(2 * numpy.pi * f3 * t)
 
@@ -345,10 +346,16 @@ if __name__ == '__main__':
         for n in range(N):
             vect[k] += semnaleConcatenate[n] * numpy.exp(-2j * numpy.pi * k * n / N)
 
-    plt.plot(t, semnaleConcatenate)
+    modul = numpy.abs(vect)
 
+    plt.plot(t, semnaleConcatenate)
+    plt.title("Semnal original")
     plt.show()
 
+    plt.subplot(2, 1, 2)
+    plt.plot(numpy.linspace(0, N // 2, N // 2), modul[:N // 2])
+    plt.tight_layout()
+    plt.show()
 
 
 
