@@ -1,5 +1,6 @@
 import numpy
 import matplotlib.pyplot as plt
+import time
 import sounddevice as sd
 from scipy.signal import sawtooth
 
@@ -333,29 +334,92 @@ def s_cos(amplitudine, frecv, timp, faza):
 #     plt.gca().set_aspect('equal', adjustable='box')
 #     plt.show()
 
+# if __name__ == '__main__':
+#     #Ex3
+#     N = 1000
+#     t = numpy.linspace(0, 1, N, endpoint=False)
+#     f1, f2, f3 = 20, 30, 100
+#
+#     semnaleConcatenate = numpy.sin(2 * numpy.pi * f1 * t) + numpy.sin(2 * numpy.pi * f2 * t) + numpy.sin(2 * numpy.pi * f3 * t)
+#
+#
+#     vect = numpy.zeros(N, complex)
+#     for k in range(N):
+#         for n in range(N):
+#             vect[k] += semnaleConcatenate[n] * numpy.exp(-2j * numpy.pi * k * n / N)
+#
+#     modul = numpy.abs(vect)
+#
+#     plt.plot(t, semnaleConcatenate)
+#     plt.title("Semnal original")
+#     plt.show()
+#
+#     plt.subplot(2, 1, 2)
+#     plt.plot(numpy.linspace(0, N // 2, N // 2), modul[:N // 2])
+#     plt.tight_layout()
+#     plt.show()
+
+
+
+
+
+#Lab 4
 if __name__ == '__main__':
-    #Ex3
-    N = 1000
-    t = numpy.linspace(0, 1, N, endpoint=False)
-    f1, f2, f3 = 20, 30, 100
+    #Ex1
+    N = [128, 256, 512, 1024, 2048, 4096, 8192]
+    timpiTrecutiProprii = []
+    timpiTrecutiPython = []
 
-    semnaleConcatenate = numpy.sin(2 * numpy.pi * f1 * t) + numpy.sin(2 * numpy.pi * f2 * t) + numpy.sin(2 * numpy.pi * f3 * t)
+    for i in N:
+        t = numpy.linspace(0, 1, i, endpoint=False)
+        f1, f2, f3 = 20, 30, 100
+        semnaleConcatenate = numpy.sin(2 * numpy.pi * f1 * t) + numpy.sin(2 * numpy.pi * f2 * t) + numpy.sin(2 * numpy.pi * f3 * t)
 
-    vect = numpy.zeros(N, complex)
-    for k in range(N):
-        for n in range(N):
-            vect[k] += semnaleConcatenate[n] * numpy.exp(-2j * numpy.pi * k * n / N)
+        fftPropriuT1 = time.perf_counter()
 
-    modul = numpy.abs(vect)
+        vect = numpy.zeros(i, complex)
 
-    plt.plot(t, semnaleConcatenate)
-    plt.title("Semnal original")
+        for k in range(i):
+            for n in range(i):
+                vect[k] += semnaleConcatenate[n] * numpy.exp(-2j * numpy.pi * k * n / i)
+
+        fftPropriuT2 = time.perf_counter()
+        timpPropriu = fftPropriuT2 - fftPropriuT1
+        timpiTrecutiProprii.append(timpPropriu)
+
+
+    for i in N:
+        t = numpy.linspace(0, 1, i, endpoint=False)
+        f1, f2, f3 = 20, 30, 100
+        semnaleConcatenate = numpy.sin(2 * numpy.pi * f1 * t) + numpy.sin(2 * numpy.pi * f2 * t) + numpy.sin(2 * numpy.pi * f3 * t)
+
+        fftPythonT1 = time.perf_counter()
+
+        fftVar = numpy.fft.fft(semnaleConcatenate)
+
+        fftPythonT2 = time.perf_counter()
+
+        timpPython = fftPythonT2 - fftPythonT1
+        timpiTrecutiPython.append(timpPython)
+
+    timpiTrecutiPropriiMs = [x * 1000 for x in timpiTrecutiProprii]
+    timpiTrecutiPythonMs = [x * 1000 for x in timpiTrecutiPython]
+
+    print(timpiTrecutiPython)
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(N, timpiTrecutiPropriiMs, 'o-', color='red')
+    plt.plot(N, timpiTrecutiPythonMs, 'o-', color='green')
+    plt.yscale('log')
+    plt.xlabel('Size of N')
+    plt.ylabel('Elapsed Time (milliseconds)')
+    plt.grid(True, which="both", ls="--")
+
     plt.show()
 
-    plt.subplot(2, 1, 2)
-    plt.plot(numpy.linspace(0, N // 2, N // 2), modul[:N // 2])
-    plt.tight_layout()
-    plt.show()
+
+
+
 
 
 
