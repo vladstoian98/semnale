@@ -364,62 +364,122 @@ def s_cos(amplitudine, frecv, timp, faza):
 
 
 #Lab 4
-if __name__ == '__main__':
-    #Ex1
-    N = [128, 256, 512, 1024, 2048, 4096, 8192]
-    timpiTrecutiProprii = []
-    timpiTrecutiPython = []
+# if __name__ == '__main__':
+#     #Ex1
+#     N = [128, 256, 512, 1024, 2048, 4096, 8192]
+#     timpiTrecutiProprii = []
+#     timpiTrecutiPython = []
+#
+#     for i in N:
+#         t = numpy.linspace(0, 1, i, endpoint=False)
+#         f1, f2, f3 = 20, 30, 100
+#         semnaleConcatenate = numpy.sin(2 * numpy.pi * f1 * t) + numpy.sin(2 * numpy.pi * f2 * t) + numpy.sin(2 * numpy.pi * f3 * t)
+#
+#         fftPropriuT1 = time.perf_counter()
+#
+#         vect = numpy.zeros(i, complex)
+#
+#         for k in range(i):
+#             for n in range(i):
+#                 vect[k] += semnaleConcatenate[n] * numpy.exp(-2j * numpy.pi * k * n / i)
+#
+#         fftPropriuT2 = time.perf_counter()
+#         timpPropriu = fftPropriuT2 - fftPropriuT1
+#         timpiTrecutiProprii.append(timpPropriu)
+#
+#
+#     for i in N:
+#         t = numpy.linspace(0, 1, i, endpoint=False)
+#         f1, f2, f3 = 20, 30, 100
+#         semnaleConcatenate = numpy.sin(2 * numpy.pi * f1 * t) + numpy.sin(2 * numpy.pi * f2 * t) + numpy.sin(2 * numpy.pi * f3 * t)
+#
+#         fftPythonT1 = time.perf_counter()
+#
+#         fftVar = numpy.fft.fft(semnaleConcatenate)
+#
+#         fftPythonT2 = time.perf_counter()
+#
+#         timpPython = fftPythonT2 - fftPythonT1
+#         timpiTrecutiPython.append(timpPython)
+#
+#     timpiTrecutiPropriiMs = [x * 1000 for x in timpiTrecutiProprii]
+#     timpiTrecutiPythonMs = [x * 1000 for x in timpiTrecutiPython]
+#
+#     print(timpiTrecutiPython)
+#
+#     plt.figure(figsize=(10, 5))
+#     plt.plot(N, timpiTrecutiPropriiMs, 'o-', color='red')
+#     plt.plot(N, timpiTrecutiPythonMs, 'o-', color='green')
+#     plt.yscale('log')
+#     plt.xlabel('Size of N')
+#     plt.ylabel('Elapsed Time (milliseconds)')
+#     plt.grid(True, which="both", ls="--")
+#
+#     plt.show()
 
-    for i in N:
-        t = numpy.linspace(0, 1, i, endpoint=False)
-        f1, f2, f3 = 20, 30, 100
-        semnaleConcatenate = numpy.sin(2 * numpy.pi * f1 * t) + numpy.sin(2 * numpy.pi * f2 * t) + numpy.sin(2 * numpy.pi * f3 * t)
+# if __name__ == '__main__':
+#     #Ex2
+#     t_samples = numpy.linspace(0, 1, 10, endpoint=False)
+#     t = numpy.linspace(0, 1, 1000, endpoint=False)
+#
+#     signal_original = numpy.sin(2 * numpy.pi * 30 * t)
+#     signal_alias1 = numpy.sin(2 * numpy.pi * 20 * t)
+#     signal_alias2 = numpy.sin(2 * numpy.pi * 10 * t)
+#
+#     samples_original = numpy.sin(2 * numpy.pi * 30 * t_samples)
+#     samples_alias1 = numpy.sin(2 * numpy.pi * 20 * t_samples)
+#     samples_alias2 = numpy.sin(2 * numpy.pi * 10 * t_samples)
+#
+#     plt.figure(figsize=(10, 8))
+#
+#     plt.subplot(3, 1, 1)
+#     plt.plot(t, signal_original)
+#     plt.scatter(t_samples, samples_original)
+#
+#     plt.subplot(3, 1, 2)
+#     plt.plot(t, signal_alias1)
+#     plt.scatter(t_samples, samples_alias1)
+#
+#     plt.subplot(3, 1, 3)
+#     plt.plot(t, signal_alias2)
+#     plt.scatter(t_samples, samples_alias2)
+#
+#     plt.tight_layout()
+#     plt.show()
 
-        fftPropriuT1 = time.perf_counter()
+# if __name__ == '__main__':
+#     #Ex3
+#     t_samples = numpy.linspace(0, 1, 100, endpoint=False)
+#     t = numpy.linspace(0, 1, 1000, endpoint=False)
+#
+#     signal_original = numpy.sin(2 * numpy.pi * 30 * t)
+#     signal_alias1 = numpy.sin(2 * numpy.pi * 20 * t)
+#     signal_alias2 = numpy.sin(2 * numpy.pi * 10 * t)
+#
+#     samples_original = numpy.sin(2 * numpy.pi * 30 * t_samples)
+#     samples_alias1 = numpy.sin(2 * numpy.pi * 20 * t_samples)
+#     samples_alias2 = numpy.sin(2 * numpy.pi * 10 * t_samples)
+#
+#     plt.figure(figsize=(10, 8))
+#
+#     plt.subplot(3, 1, 1)
+#     plt.plot(t, signal_original)
+#     plt.scatter(t_samples, samples_original)
+#
+#     plt.subplot(3, 1, 2)
+#     plt.plot(t, signal_alias1)
+#     plt.scatter(t_samples, samples_alias1)
+#
+#     plt.subplot(3, 1, 3)
+#     plt.plot(t, signal_alias2)
+#     plt.scatter(t_samples, samples_alias2)
+#
+#     plt.tight_layout()
+#     plt.show()
 
-        vect = numpy.zeros(i, complex)
+    #Ex 4: 400 hz
 
-        for k in range(i):
-            for n in range(i):
-                vect[k] += semnaleConcatenate[n] * numpy.exp(-2j * numpy.pi * k * n / i)
-
-        fftPropriuT2 = time.perf_counter()
-        timpPropriu = fftPropriuT2 - fftPropriuT1
-        timpiTrecutiProprii.append(timpPropriu)
-
-
-    for i in N:
-        t = numpy.linspace(0, 1, i, endpoint=False)
-        f1, f2, f3 = 20, 30, 100
-        semnaleConcatenate = numpy.sin(2 * numpy.pi * f1 * t) + numpy.sin(2 * numpy.pi * f2 * t) + numpy.sin(2 * numpy.pi * f3 * t)
-
-        fftPythonT1 = time.perf_counter()
-
-        fftVar = numpy.fft.fft(semnaleConcatenate)
-
-        fftPythonT2 = time.perf_counter()
-
-        timpPython = fftPythonT2 - fftPythonT1
-        timpiTrecutiPython.append(timpPython)
-
-    timpiTrecutiPropriiMs = [x * 1000 for x in timpiTrecutiProprii]
-    timpiTrecutiPythonMs = [x * 1000 for x in timpiTrecutiPython]
-
-    print(timpiTrecutiPython)
-
-    plt.figure(figsize=(10, 5))
-    plt.plot(N, timpiTrecutiPropriiMs, 'o-', color='red')
-    plt.plot(N, timpiTrecutiPythonMs, 'o-', color='green')
-    plt.yscale('log')
-    plt.xlabel('Size of N')
-    plt.ylabel('Elapsed Time (milliseconds)')
-    plt.grid(True, which="both", ls="--")
-
-    plt.show()
-
-
-
-
+    #Ex7: 10 dB
 
 
 
