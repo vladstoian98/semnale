@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import time
 import sounddevice as sd
 from scipy.signal import sawtooth
+import pandas as pd
+
 
 #Laborator 1
 
@@ -481,10 +483,71 @@ def s_cos(amplitudine, frecv, timp, faza):
 
     #Ex7: 10 dB
 
+#Lab5
+
+# if __name__ == '__main__':
+#     file_path = 'C:/Users/Vlad/Downloads/Train.csv'
+#
+#     df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
+#
+#     plt.figure(figsize=(15, 7))
+#     plt.plot(df.index, df['Count'])
+#     plt.title('trafic')
+#     plt.xlabel('timp')
+#     plt.ylabel('count')
+#     plt.grid(True)
+#     plt.xticks(rotation=45)
+#     plt.tight_layout()
+#     plt.show()
+
+#Ex1
+# semnalul a fost eșantionat cu o frecvență de 1 eșantion pe oră,
+# deoarece pentru a obține 18288 eșantioane, cu măsurători luate oră de oră,
+# ar însemna că datele acoperă 18288 de ore.
+# Deci, frecvența de eșantionare este de 1 Hz,
+# ceea ce înseamnă un eșantion pe oră.
+
+#Ex2
+#18288/24 = 762 zile
+
+#Ex3
+#Dacă semnalul a fost eșantionat corect și optim,
+# atunci frecvența de eșantionare este de două ori
+# mai mare decât frecvența maximă a semnalului.
+# Astfel, deoarece frecventa de esantionare este 1 Hz,
 
 
+#Ex4
+if __name__ == '__main__':
+    file_path = 'C:/Users/Vlad/Downloads/Train.csv'
 
+    df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
 
+    time_interval = (df.index[1] - df.index[0]).total_seconds()
+
+    print(time_interval)
+
+    f_sample = 1 / time_interval
+
+    s = df['Count'].values
+
+    fft_result = numpy.fft.fft(s)
+
+    n = s.size
+    freq = numpy.fft.fftfreq(n, d=time_interval)
+
+    print(n, freq)
+
+    fft_positive_half = fft_result[:n // 2]
+    freq_positive_half = freq[:n // 2]
+
+    plt.figure(figsize=(15, 7))
+    plt.plot(freq_positive_half, numpy.abs(fft_positive_half))
+    plt.title('Magnitudinea Transformatei Fourier a Numărului de Trafic')
+    plt.xlabel('Frecvență (Hz)')
+    plt.ylabel('Magnitudine')
+    plt.grid(True)
+    plt.show()
 
 
 
