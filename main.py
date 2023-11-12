@@ -2,7 +2,7 @@ import numpy
 import matplotlib.pyplot as plt
 import time
 import sounddevice as sd
-from scipy.signal import sawtooth
+from scipy.signal import sawtooth, butter, filtfilt
 import pandas as pd
 
 
@@ -500,56 +500,171 @@ def s_cos(amplitudine, frecv, timp, faza):
 #     plt.tight_layout()
 #     plt.show()
 
-#Ex1
+#a
 # semnalul a fost eșantionat cu o frecvență de 1 eșantion pe oră,
 # deoarece pentru a obține 18288 eșantioane, cu măsurători luate oră de oră,
 # ar însemna că datele acoperă 18288 de ore.
 # Deci, frecvența de eșantionare este de 1 Hz,
 # ceea ce înseamnă un eșantion pe oră.
 
-#Ex2
+#b
 #18288/24 = 762 zile
 
-#Ex3
+#c
 #Dacă semnalul a fost eșantionat corect și optim,
 # atunci frecvența de eșantionare este de două ori
 # mai mare decât frecvența maximă a semnalului.
 # Astfel, deoarece frecventa de esantionare este 1 Hz,
 
 
-#Ex4
+#d
+# if __name__ == '__main__':
+#     file_path = 'C:/Users/Vlad/Downloads/Train.csv'
+#
+#     df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
+#
+#     time_interval = (df.index[1] - df.index[0]).total_seconds()
+#
+#     print(time_interval)
+#
+#     f_sample = 1 / time_interval
+#
+#     s = df['Count'].values
+#
+#     fft_result = numpy.fft.fft(s)
+#
+#     n = s.size
+#     freq = numpy.fft.fftfreq(n, d=time_interval)
+#
+#     print(n, freq)
+#
+#     fft_positive_half = fft_result[:n // 2]
+#     freq_positive_half = freq[:n // 2]
+#
+#     plt.figure(figsize=(15, 7))
+#     plt.plot(freq_positive_half, numpy.abs(fft_positive_half))
+#     plt.title('Magnitudinea Transformatei Fourier a Numărului de Trafic')
+#     plt.xlabel('Frecvență (Hz)')
+#     plt.ylabel('Magnitudine')
+#     plt.grid(True)
+#     plt.show()
+
+#e
+# Prima valoare în vectorul rezultat din FFT (fft_result[0]) corespunde componentei continue. Aceasta reprezintă componenta continua a semnalului. Pentru a scoate componenta continua, facem fft_result[0] = 0
+# if __name__ == '__main__':
+#     file_path = 'C:/Users/Vlad/Downloads/Train.csv'
+#
+#     df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
+#
+#     time_interval = (df.index[1] - df.index[0]).total_seconds()
+#
+#     f_sample = 1 / time_interval
+#
+#     s = df['Count'].values
+#
+#     fft_result = numpy.fft.fft(s)
+#
+#     n = s.size
+#     freq = numpy.fft.fftfreq(n, d=time_interval)
+#
+#     cont_comp = fft_result[0]
+#
+#     print(numpy.abs(cont_comp))
+#
+#     # Remove the DC component if it is present
+#     if numpy.abs(cont_comp) > 0:
+#         fft_result[0] = 0
+#
+#     fft_positive_half = fft_result[:n // 2]
+#     freq_positive_half = freq[:n // 2]
+#
+#     plt.figure(figsize=(15, 7))
+#     plt.plot(freq_positive_half, numpy.abs(fft_positive_half))
+#     plt.title('Magnitudinea Transformatei Fourier a Numărului de Trafic')
+#     plt.xlabel('Frecvență (Hz)')
+#     plt.ylabel('Magnitudine')
+#     plt.grid(True)
+#     plt.show()
+
+#f
+# Magnitudinile maxime ar trebui sa fie reprezentate de orele de varf din ziua respectiva
+# if __name__ == '__main__':
+#     file_path = 'C:/Users/Vlad/Downloads/Train.csv'
+#
+#     df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
+#
+#     time_interval = (df.index[1] - df.index[0]).total_seconds()
+#
+#     # print(time_interval)
+#
+#     f_sample = 1 / time_interval
+#
+#     s = df['Count'].values
+#
+#     fft_result = numpy.fft.fft(s)
+#
+#     n = s.size
+#     freq = numpy.fft.fftfreq(n, d=time_interval)
+#
+#     #Calculam modulul
+#     modul = numpy.abs(fft_result)
+#
+#     max = modul.argsort()[-5:-1]
+#
+#     top_magnitudes = modul[max]
+#     top_frequencies = freq[max]
+#
+#     for i in range(4):
+#         print(f"Frecvența {top_frequencies[i]} Hz are o magnitudine de {top_magnitudes[i]}")
+
+
+# g
+# if __name__ == '__main__':
+#     file_path = 'C:/Users/Vlad/Downloads/Train.csv'
+#
+#     df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
+#
+#     esantionIncepere = df[df['Count'] > 1000].first_valid_index()
+#
+#     while esantionIncepere.weekday() != 0:
+#         esantionIncepere += pd.Timedelta(days=1)
+#
+#     final = esantionIncepere + pd.DateOffset(months=1)
+#     traficLuna = df[esantionIncepere:final]
+#
+#     plt.figure(figsize=(15, 7))
+#     plt.plot(traficLuna.index, traficLuna['Count'])
+#     plt.xlabel('Time')
+#     plt.ylabel('Count')
+#     plt.grid(True)
+#     plt.xticks(rotation=45)
+#     plt.tight_layout()
+#     plt.show()
+
+
+#i
 if __name__ == '__main__':
     file_path = 'C:/Users/Vlad/Downloads/Train.csv'
 
     df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
 
-    time_interval = (df.index[1] - df.index[0]).total_seconds()
+    ordin = 5  # ordin mai mare rezulta intr-un "slope" mai brusc
+    cutoff_frequency = 0.1  # fractiune din frecventa Nyquist
 
-    print(time_interval)
+    b, a = butter(ordin, cutoff_frequency, btype='low', analog=False)
 
-    f_sample = 1 / time_interval
-
-    s = df['Count'].values
-
-    fft_result = numpy.fft.fft(s)
-
-    n = s.size
-    freq = numpy.fft.fftfreq(n, d=time_interval)
-
-    print(n, freq)
-
-    fft_positive_half = fft_result[:n // 2]
-    freq_positive_half = freq[:n // 2]
+    df['Filtered_Count'] = filtfilt(b, a, df['Count'])
 
     plt.figure(figsize=(15, 7))
-    plt.plot(freq_positive_half, numpy.abs(fft_positive_half))
-    plt.title('Magnitudinea Transformatei Fourier a Numărului de Trafic')
-    plt.xlabel('Frecvență (Hz)')
-    plt.ylabel('Magnitudine')
+    plt.plot(df.index, df['Count'], label='Original')
+    plt.plot(df.index, df['Filtered_Count'], label='Filtered', color='red')
+    plt.xlabel('Time')
+    plt.ylabel('Count')
+    plt.legend()
     plt.grid(True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
     plt.show()
-
-
 
 
 
