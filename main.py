@@ -2,7 +2,8 @@ import numpy
 import matplotlib.pyplot as plt
 import time
 import sounddevice as sd
-from scipy.signal import sawtooth, butter, filtfilt
+from numpy.fft import ifft, fft
+from scipy.signal import sawtooth, butter, filtfilt, cheby1
 import pandas as pd
 
 
@@ -643,21 +644,182 @@ def s_cos(amplitudine, frecv, timp, faza):
 
 
 #i
+# if __name__ == '__main__':
+#     file_path = 'C:/Users/Vlad/Downloads/Train.csv'
+#
+#     df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
+#
+    # ordin = 5  # ordin mai mare rezulta intr-un "slope" mai brusc
+    # cutoff_frequency = 0.1  # fractiune din frecventa Nyquist
+    #
+    # b, a = butter(ordin, cutoff_frequency, btype='low', analog=False)
+    #
+    # df['Filtered_Count'] = filtfilt(b, a, df['Count'])
+    #
+    # plt.figure(figsize=(15, 7))
+    # plt.plot(df.index, df['Count'], label='Original')
+    # plt.plot(df.index, df['Filtered_Count'], label='Filtered', color='red')
+    # plt.xlabel('Time')
+    # plt.ylabel('Count')
+    # plt.legend()
+    # plt.grid(True)
+    # plt.xticks(rotation=45)
+    # plt.tight_layout()
+    # plt.show()
+
+
+#Lab 6
+
+#Ex1
+# if __name__ == '__main__':
+#     numpy.random.seed(0)
+#
+#     N = 100
+#     x = numpy.random.rand(N)
+#
+#     vectors = [x]
+#
+#     for _ in range(3):
+#         x = x * x
+#         vectors.append(x)
+#
+#     plt.figure(figsize=(14, 7))
+#     for i, vector in enumerate(vectors):
+#         plt.subplot(2, 2, i + 1)
+#         plt.plot(vector)
+#         plt.title(f'Iterarea {i}')
+#     plt.tight_layout()
+#     plt.show()
+
+#Ex2
+# if __name__ == '__main__':
+#     # Acum vor fi aceleasi date generate
+#     numpy.random.seed(0)
+#
+#     # Gradul maxim
+#     N = 10
+#
+#     # Generam coeficientii
+#     p_coefficients = numpy.random.randint(-10, 10, N + 1)
+#     q_coefficients = numpy.random.randint(-10, 10, N + 1)
+#
+#     # Produs direct
+#     r_classic = numpy.polynomial.polynomial.polymul(p_coefficients, q_coefficients)
+#
+#     # asiguram prin 0 padding ca vectorii de coeficienti sunt indeajuns de lungi pt a reprezenta toti termenii posibili in polinomul rezultat
+#     p_padded = numpy.pad(p_coefficients, (0, len(q_coefficients) - 1))
+#     q_padded = numpy.pad(q_coefficients, (0, len(p_coefficients) - 1))
+#     r_fft = ifft(fft(p_padded) * fft(
+#         q_padded)).real
+#
+#     r_fft = numpy.round(r_fft)
+#
+#     print("Coeficientii lui p(x):", p_coefficients)
+#     print("Coeficientii lui q(x):", q_coefficients)
+#     print("Produs clasic:", r_classic)
+#     print("Produs cu FFT:", r_fft)
+
+
+#Ex3
+# if __name__ == '__main__':
+#     t = numpy.arange(0, 1, 1 / 5000)
+#
+#     sinusul = numpy.sin(2 * numpy.pi * 100 * t)
+#
+#     # Dimensiune fereastra
+#     dimFer = 200
+#
+#     # Aplicam fereastra dreptunghiulara
+#     fereastraDrept = numpy.ones(dimFer)
+#     sinFerDrept = sinusul[:dimFer] * fereastraDrept
+#
+#     print("Fereastra drept: ", fereastraDrept)
+#
+#     # Aplicam fereastra hanning
+#     fereastraHanning = numpy.hanning(dimFer)
+#     sinFerHanning = sinusul[:dimFer] * fereastraHanning
+#
+#     print("Fereastra drept: ", fereastraHanning)
+#
+#     plt.figure(figsize=(14, 7))
+#
+#     # Sin Original
+#     plt.subplot(2, 1, 1)
+#     plt.plot(t[:dimFer], sinusul[:dimFer])
+#     plt.title('Sin Original')
+#
+#     # Sin dupa fereastra drept
+#     plt.subplot(2, 2, 3)
+#     plt.plot(t[:dimFer], sinFerDrept)
+#     plt.title('Sin dupa fereastra drept')
+#
+#     # Sin dupa fereastra hanning
+#     plt.subplot(2, 2, 4)
+#     plt.plot(t[:dimFer], sinFerHanning)
+#     plt.title('Sin dupa fereastra hanning')
+#
+#     plt.tight_layout()
+#     plt.show()
+
+#Ex4
+#a,b
+# if __name__ == '__main__':
+#     df = pd.read_csv('C:/Users/Vlad/Downloads/Train.csv')
+#
+#     df['Datetime'] = pd.to_datetime(df['Datetime'], format='%d-%m-%Y %H:%M')
+#
+#     start_date = df['Datetime'].min()
+#     end_date = start_date + pd.Timedelta(days=3)
+#
+#     treiZile = df[(df['Datetime'] >= start_date) & (df['Datetime'] < end_date)]
+#
+#     print(treiZile)
+#
+#     # Extragem semnalul (numărul de vehicule)
+#     x = treiZile['Count'].values
+#
+#     # Dimensiunile ferestrei pentru filtrul de medie alunecătoare
+#     window_sizes = [5, 9, 13, 17]
+#
+#     # Aplicam filtrul de medie alunecătoare cu diferite dimensiuni ale ferestrei
+#     smooth_signals = {}
+#     for w in window_sizes:
+#         smoothed_signal = numpy.convolve(x, numpy.ones(w), 'valid') / w
+#         smooth_signals[w] = smoothed_signal
+#
+#     # Afișați semnalele netezite pentru diferite dimensiuni ale ferestrei
+#     for w, semnal in smooth_signals.items():
+#         print(f"Window dim {w}:")
+#         print(semnal)
+
+
+
+#c,d,e,f
 if __name__ == '__main__':
-    file_path = 'C:/Users/Vlad/Downloads/Train.csv'
+    df = pd.read_csv('C:/Users/Vlad/Downloads/Train.csv')
 
-    df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
+    df['Datetime'] = pd.to_datetime(df['Datetime'], format='%d-%m-%Y %H:%M')
 
-    ordin = 5  # ordin mai mare rezulta intr-un "slope" mai brusc
-    cutoff_frequency = 0.1  # fractiune din frecventa Nyquist
+    start_date = df['Datetime'].min()
+    end_date = start_date + pd.Timedelta(days=3)
 
+    treiZile = df[(df['Datetime'] >= start_date) & (df['Datetime'] < end_date)]
+
+    ordin = 1  # ordin mai mare rezulta intr-un "slope" mai brusc
+    cutoff_frequency = 0.1  # fractiune din frecventa Nyquist, adica 0.1 din frecventa Nyquist, care este de 0.5 esantioane pe ora
+
+    #b - coef coef polinomului din numarator, iar a pt cei din numitor
     b, a = butter(ordin, cutoff_frequency, btype='low', analog=False)
+    treiZile['Filtered_Count'] = filtfilt(b, a, treiZile['Count'])
 
-    df['Filtered_Count'] = filtfilt(b, a, df['Count'])
+    rp = 0.1  # Nivelul de undulație în banda trecută în dB
+    b_cheby, a_cheby = cheby1(ordin, rp, cutoff_frequency, btype='low', analog=False)
+    treiZile['Filtered_Count_Cheby'] = filtfilt(b_cheby, a_cheby, treiZile['Count'])
 
     plt.figure(figsize=(15, 7))
-    plt.plot(df.index, df['Count'], label='Original')
-    plt.plot(df.index, df['Filtered_Count'], label='Filtered', color='red')
+    plt.plot(treiZile['Datetime'], treiZile['Count'], label='Original')
+    plt.plot(treiZile['Datetime'], treiZile['Filtered_Count'], label='Filtered', color='red')
+    plt.plot(treiZile['Datetime'], treiZile['Filtered_Count_Cheby'], label='Chebyshev Filtered', color='green')
     plt.xlabel('Time')
     plt.ylabel('Count')
     plt.legend()
@@ -665,7 +827,7 @@ if __name__ == '__main__':
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.show()
-
+    #Filtrul Chebyshev pare mai exact. Filtru Butterworth este mai granular atunci cand ordinul este mai mic; filtrul Chebyshev este mai granular atunci cand rp este mai mic
 
 
 
