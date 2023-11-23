@@ -1,8 +1,10 @@
 import numpy
 import matplotlib.pyplot as plt
 import time
+
+import numpy as np
 import sounddevice as sd
-from numpy.fft import ifft, fft
+from numpy.fft import ifft, fft, fftshift, fft2, ifft2, ifftshift
 from scipy.signal import sawtooth, butter, filtfilt, cheby1
 import pandas as pd
 
@@ -366,10 +368,10 @@ def s_cos(amplitudine, frecv, timp, faza):
 
 
 
-#Lab 4
+# Lab 4
 # if __name__ == '__main__':
 #     #Ex1
-#     N = [128, 256, 512, 1024, 2048, 4096, 8192]
+#     N = [128, 256, 512, 1024, 2048]
 #     timpiTrecutiProprii = []
 #     timpiTrecutiPython = []
 #
@@ -452,16 +454,16 @@ def s_cos(amplitudine, frecv, timp, faza):
 
 # if __name__ == '__main__':
 #     #Ex3
-#     t_samples = numpy.linspace(0, 1, 100, endpoint=False)
+#     t_samples = numpy.linspace(0, 1, 25, endpoint=False)
 #     t = numpy.linspace(0, 1, 1000, endpoint=False)
 #
-#     signal_original = numpy.sin(2 * numpy.pi * 30 * t)
-#     signal_alias1 = numpy.sin(2 * numpy.pi * 20 * t)
-#     signal_alias2 = numpy.sin(2 * numpy.pi * 10 * t)
+#     signal_original = numpy.sin(2 * numpy.pi * 75 * t)
+#     signal_alias1 = numpy.sin(2 * numpy.pi * 50 * t)
+#     signal_alias2 = numpy.sin(2 * numpy.pi * 25 * t)
 #
-#     samples_original = numpy.sin(2 * numpy.pi * 30 * t_samples)
-#     samples_alias1 = numpy.sin(2 * numpy.pi * 20 * t_samples)
-#     samples_alias2 = numpy.sin(2 * numpy.pi * 10 * t_samples)
+#     samples_original = numpy.sin(2 * numpy.pi * 5 * t_samples)
+#     # samples_alias1 = numpy.sin(2 * numpy.pi * 50 * t_samples)
+#     # samples_alias2 = numpy.sin(2 * numpy.pi * 25 * t_samples)
 #
 #     plt.figure(figsize=(10, 8))
 #
@@ -471,11 +473,11 @@ def s_cos(amplitudine, frecv, timp, faza):
 #
 #     plt.subplot(3, 1, 2)
 #     plt.plot(t, signal_alias1)
-#     plt.scatter(t_samples, samples_alias1)
+#     plt.scatter(t_samples, samples_original)
 #
 #     plt.subplot(3, 1, 3)
 #     plt.plot(t, signal_alias2)
-#     plt.scatter(t_samples, samples_alias2)
+#     plt.scatter(t_samples, samples_original)
 #
 #     plt.tight_layout()
 #     plt.show()
@@ -649,23 +651,28 @@ def s_cos(amplitudine, frecv, timp, faza):
 #
 #     df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
 #
-    # ordin = 5  # ordin mai mare rezulta intr-un "slope" mai brusc
-    # cutoff_frequency = 0.1  # fractiune din frecventa Nyquist
-    #
-    # b, a = butter(ordin, cutoff_frequency, btype='low', analog=False)
-    #
-    # df['Filtered_Count'] = filtfilt(b, a, df['Count'])
-    #
-    # plt.figure(figsize=(15, 7))
-    # plt.plot(df.index, df['Count'], label='Original')
-    # plt.plot(df.index, df['Filtered_Count'], label='Filtered', color='red')
-    # plt.xlabel('Time')
-    # plt.ylabel('Count')
-    # plt.legend()
-    # plt.grid(True)
-    # plt.xticks(rotation=45)
-    # plt.tight_layout()
-    # plt.show()
+#     start_date = df.index.min()
+#     end_date = start_date + pd.Timedelta(days=3)
+#
+#     treiZile = df[(df.index >= start_date) & (df.index < end_date)]
+#
+#     ordin = 5  # ordin mai mare rezulta intr-un "slope" mai brusc
+#     cutoff_frequency = 0.1  # fractiune din frecventa Nyquist
+#
+#     b, a = butter(ordin, cutoff_frequency, btype='low', analog=False)
+#
+#     treiZile['Filtered_Count'] = filtfilt(b, a, treiZile['Count'])
+#
+#     plt.figure(figsize=(15, 7))
+#     plt.plot(treiZile.index, treiZile['Count'], label='Original')
+#     plt.plot(treiZile.index, treiZile['Filtered_Count'], label='Filtered', color='red')
+#     plt.xlabel('Time')
+#     plt.ylabel('Count')
+#     plt.legend()
+#     plt.grid(True)
+#     plt.xticks(rotation=45)
+#     plt.tight_layout()
+#     plt.show()
 
 
 #Lab 6
@@ -766,12 +773,12 @@ def s_cos(amplitudine, frecv, timp, faza):
 # if __name__ == '__main__':
 #     df = pd.read_csv('C:/Users/Vlad/Downloads/Train.csv')
 #
-#     df['Datetime'] = pd.to_datetime(df['Datetime'], format='%d-%m-%Y %H:%M')
-#
-#     start_date = df['Datetime'].min()
-#     end_date = start_date + pd.Timedelta(days=3)
-#
-#     treiZile = df[(df['Datetime'] >= start_date) & (df['Datetime'] < end_date)]
+    # df['Datetime'] = pd.to_datetime(df['Datetime'], format='%d-%m-%Y %H:%M')
+    #
+    # start_date = df['Datetime'].min()
+    # end_date = start_date + pd.Timedelta(days=3)
+    #
+    # treiZile = df[(df['Datetime'] >= start_date) & (df['Datetime'] < end_date)]
 #
 #     print(treiZile)
 #
@@ -794,44 +801,107 @@ def s_cos(amplitudine, frecv, timp, faza):
 
 
 
-#c,d,e,f
+# #c,d,e,f
+# if __name__ == '__main__':
+#     df = pd.read_csv('C:/Users/Vlad/Downloads/Train.csv')
+#
+#     df['Datetime'] = pd.to_datetime(df['Datetime'], format='%d-%m-%Y %H:%M')
+#
+#     start_date = df['Datetime'].min()
+#     end_date = start_date + pd.Timedelta(days=3)
+#
+#     treiZile = df[(df['Datetime'] >= start_date) & (df['Datetime'] < end_date)]
+#
+#     ordin = 1  # ordin mai mare rezulta intr-un "slope" mai brusc
+#     cutoff_frequency = 0.1  # fractiune din frecventa Nyquist, adica 0.1 din frecventa Nyquist, care este de 0.5 esantioane pe ora
+#
+#     #b - coef coef polinomului din numarator, iar a pt cei din numitor
+#     b, a = butter(ordin, cutoff_frequency, btype='low', analog=False)
+#     treiZile['Filtered_Count'] = filtfilt(b, a, treiZile['Count'])
+#
+#     rp = 0.1  # Nivelul de undulație în banda trecută în dB
+#     b_cheby, a_cheby = cheby1(ordin, rp, cutoff_frequency, btype='low', analog=False)
+#     treiZile['Filtered_Count_Cheby'] = filtfilt(b_cheby, a_cheby, treiZile['Count'])
+#
+#     plt.figure(figsize=(15, 7))
+#     plt.plot(treiZile['Datetime'], treiZile['Count'], label='Original')
+#     plt.plot(treiZile['Datetime'], treiZile['Filtered_Count'], label='Filtered', color='red')
+#     plt.plot(treiZile['Datetime'], treiZile['Filtered_Count_Cheby'], label='Chebyshev Filtered', color='green')
+#     plt.xlabel('Time')
+#     plt.ylabel('Count')
+#     plt.legend()
+#     plt.grid(True)
+#     plt.xticks(rotation=45)
+#     plt.tight_layout()
+#     plt.show()
+#     #Filtrul Chebyshev pare mai exact. Filtru Butterworth este mai granular atunci cand ordinul este mai mic; filtrul Chebyshev este mai granular atunci cand rp este mai mic
+
+
+#Lab7
+
+#1
 if __name__ == '__main__':
-    df = pd.read_csv('C:/Users/Vlad/Downloads/Train.csv')
+    # Define the domain for the functions
+    N = 64  # Size of the grid (N x N)
+    n1, n2 = np.meshgrid(np.arange(N), np.arange(N))
 
-    df['Datetime'] = pd.to_datetime(df['Datetime'], format='%d-%m-%Y %H:%M')
+    # Define the functions
+    x1 = np.sin(2 * np.pi * n1 + 3 * np.pi * n2)
+    x2 = np.sin(4 * np.pi * n1) + np.cos(6 * np.pi * n2)
 
-    start_date = df['Datetime'].min()
-    end_date = start_date + pd.Timedelta(days=3)
+    # Initialize Y with zeros
+    Y = np.zeros((N, N), dtype=complex)
 
-    treiZile = df[(df['Datetime'] >= start_date) & (df['Datetime'] < end_date)]
 
-    ordin = 1  # ordin mai mare rezulta intr-un "slope" mai brusc
-    cutoff_frequency = 0.1  # fractiune din frecventa Nyquist, adica 0.1 din frecventa Nyquist, care este de 0.5 esantioane pe ora
 
-    #b - coef coef polinomului din numarator, iar a pt cei din numitor
-    b, a = butter(ordin, cutoff_frequency, btype='low', analog=False)
-    treiZile['Filtered_Count'] = filtfilt(b, a, treiZile['Count'])
+    # Define the frequencies for which Y is not zero
+    Y[0, 5] = Y[0, N - 5] = 1
+    Y[5, 0] = Y[N - 5, 0] = 1
+    Y[5, 5] = Y[N - 5, N - 5] = 1
 
-    rp = 0.1  # Nivelul de undulație în banda trecută în dB
-    b_cheby, a_cheby = cheby1(ordin, rp, cutoff_frequency, btype='low', analog=False)
-    treiZile['Filtered_Count_Cheby'] = filtfilt(b_cheby, a_cheby, treiZile['Count'])
+    y = ifft2(ifftshift(Y))
 
-    plt.figure(figsize=(15, 7))
-    plt.plot(treiZile['Datetime'], treiZile['Count'], label='Original')
-    plt.plot(treiZile['Datetime'], treiZile['Filtered_Count'], label='Filtered', color='red')
-    plt.plot(treiZile['Datetime'], treiZile['Filtered_Count_Cheby'], label='Chebyshev Filtered', color='green')
-    plt.xlabel('Time')
-    plt.ylabel('Count')
-    plt.legend()
-    plt.grid(True)
-    plt.xticks(rotation=45)
+    # Calculate the 2D Fourier Transform for the given functions
+    Y1 = fftshift(fft2(x1))
+    Y2 = fftshift(fft2(x2))
+
+    # Plotting the functions and their spectra
+    fig, axs = plt.subplots(2, 4, figsize=(12, 8))
+
+    # Plot x1
+    axs[0, 0].imshow(x1, cmap='viridis', extent=(0, N, 0, N))
+    axs[0, 0].set_title('x1(n1, n2)')
+
+    # Plot spectrum of x1
+    axs[0, 1].imshow(np.abs(Y1), cmap='viridis', extent=(0, N, 0, N))
+    axs[0, 1].set_title('Spectrum of x1')
+
+    # Plot x2
+    axs[0, 2].imshow(x2, cmap='viridis', extent=(0, N, 0, N))
+    axs[0, 2].set_title('x2(n1, n2)')
+
+    # Plot spectrum of x2
+    axs[1, 0].imshow(np.abs(Y2), cmap='viridis', extent=(0, N, 0, N))
+    axs[1, 0].set_title('Spectrum of x2')
+
+    axs[1, 1].imshow(np.abs(y), cmap='viridis', extent=(0, N, 0, N))
+    axs[1, 1].set_title('y')
+
+    # Plot predefined Y spectrum
+    axs[1, 2].imshow(np.abs(Y), cmap='viridis', extent=(0, N, 0, N))
+    axs[1, 2].set_title('Predefined Y Spectrum')
+
+    # Hide the last subplot (empty)
+    axs[1, 2].axis('off')
+
+    # Adjust layout
     plt.tight_layout()
+
+    # Save the figure
+    plt.savefig('C:/Users/Vlad/Downloads/spectra_and_functions.png')
+
+    # Show the figure
     plt.show()
-    #Filtrul Chebyshev pare mai exact. Filtru Butterworth este mai granular atunci cand ordinul este mai mic; filtrul Chebyshev este mai granular atunci cand rp este mai mic
-
-
-
-
 
 
 
