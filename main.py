@@ -1,12 +1,15 @@
 import numpy
 import matplotlib.pyplot as plt
 import time
-
+from scipy import misc, ndimage
 import numpy as np
 import sounddevice as sd
 from numpy.fft import ifft, fft, fftshift, fft2, ifft2, ifftshift
+from scipy.ndimage import median_filter, gaussian_filter
 from scipy.signal import sawtooth, butter, filtfilt, cheby1
 import pandas as pd
+from skimage.restoration import estimate_sigma, denoise_nl_means
+import cv2
 
 
 #Laborator 1
@@ -840,75 +843,134 @@ def s_cos(amplitudine, frecv, timp, faza):
 #Lab7
 
 #1
+# if __name__ == '__main__':
+#     N = 64
+#     n1, n2 = np.meshgrid(np.arange(N), np.arange(N))
+#
+#     x1 = np.sin(2 * np.pi * n1 + 3 * np.pi * n2)
+#     x2 = np.sin(4 * np.pi * n1) + np.cos(6 * np.pi * n2)
+#
+#     Y = np.zeros((N, N), dtype=complex)
+#
+#     Y[0, 5] = Y[0, N - 5] = 1
+#     Y[5, 0] = Y[N - 5, 0] = 1
+#     Y[5, 5] = Y[N - 5, N - 5] = 1
+#
+#     y = ifft2(ifftshift(Y))
+#
+#     Y1 = fftshift(fft2(x1))
+#     Y2 = fftshift(fft2(x2))
+#
+#     fig, axs = plt.subplots(2, 3, figsize=(12, 8))
+#
+#     axs[0, 0].imshow(x1, cmap='viridis', extent=(0, N, 0, N))
+#     axs[0, 0].set_title('x1(n1, n2)')
+#
+#     axs[0, 1].imshow(np.abs(Y1), cmap='viridis', extent=(0, N, 0, N))
+#     axs[0, 1].set_title('Spectru x1')
+#
+#     axs[0, 2].imshow(x2, cmap='viridis', extent=(0, N, 0, N))
+#     axs[0, 2].set_title('x2(n1, n2)')
+#
+#     axs[1, 0].imshow(np.abs(Y2), cmap='viridis', extent=(0, N, 0, N))
+#     axs[1, 0].set_title('Spectru x2')
+#
+#     axs[1, 1].imshow(np.abs(y), cmap='viridis', extent=(0, N, 0, N))
+#     axs[1, 1].set_title('Poza y')
+#
+#     axs[1, 2].imshow(np.abs(Y), cmap='viridis', extent=(0, N, 0, N))
+#     axs[1, 2].set_title('Spectru Y')
+#
+#     axs[1, 2].axis('off')
+#
+#     plt.tight_layout()
+#
+#     plt.savefig('C:/Users/Vlad/Downloads/spectra_and_functions.png')
+#
+#     # Show the figure
+#     plt.show()
+
+#2
+
+def compress_image(img, snr_threshold):
+    gray = img
+
+    f = fft2(gray)
+    fshift = fftshift(f)
+
+    rows, cols = gray.shape
+
+    #centru
+    crow, ccol = rows // 2, cols // 2
+
+    mask = np.zeros((rows, cols), np.uint8)
+    mask[crow - int(snr_threshold):crow + int(snr_threshold), ccol - int(snr_threshold):ccol + int(snr_threshold)] = 1
+
+    fshift = fshift * mask
+    f_ishift = ifftshift(fshift)
+
+    img_back = ifft2(f_ishift)
+    img_back = np.abs(img_back)
+
+    return img_back
+
+
+# if __name__ == '__main__':
+#     X = misc.face(gray=True)
+#
+#     snr = 50
+#
+#     imagine_compresata = compress_image(X, snr)
+#
+#     plt.subplot(1, 2, 1)
+#     plt.imshow(X, cmap=plt.cm.gray)
+#
+#     plt.subplot(1, 2, 2)
+#     plt.imshow(imagine_compresata, cmap=plt.cm.gray)
+#     plt.show()
+
+def calculate_snr(signal, noise):
+    mean_signal = np.mean(signal)
+    mean_noise = np.mean(noise)
+    std_noise = np.std(noise)
+    return 20 * np.log10(mean_signal / std_noise)
+
+#3
 if __name__ == '__main__':
-    # Define the domain for the functions
-    N = 64  # Size of the grid (N x N)
-    n1, n2 = np.meshgrid(np.arange(N), np.arange(N))
+    pixel_noise = 200
 
-    # Define the functions
-    x1 = np.sin(2 * np.pi * n1 + 3 * np.pi * n2)
-    x2 = np.sin(4 * np.pi * n1) + np.cos(6 * np.pi * n2)
+    X = misc.face(gray=True)
 
-    # Initialize Y with zeros
-    Y = np.zeros((N, N), dtype=complex)
+    noise = np.random.randint(-pixel_noise, high=pixel_noise + 1, size=X.shape)
+    X_noisy = X + noise
 
+    # Calculul SNR înainte de eliminarea zgomotului
+    snr_before = calculate_snr(X, X_noisy - X)
 
+    # Estimarea sigma zgomotului pentru Non-Local Means Denoising
+    sigma_est = np.mean(estimate_sigma(X_noisy))
+    # Aplicarea Non-Local Means Denoising
+    X_denoised_nl_means = denoise_nl_means(X_noisy, h=1.15 * sigma_est, fast_mode=True,
+                                           patch_size=5, patch_distance=6)
 
-    # Define the frequencies for which Y is not zero
-    Y[0, 5] = Y[0, N - 5] = 1
-    Y[5, 0] = Y[N - 5, 0] = 1
-    Y[5, 5] = Y[N - 5, N - 5] = 1
+    # Calculul SNR după eliminarea zgomotului cu Non-Local Means Denoising
+    snr_after_nl_means = calculate_snr(X, X_denoised_nl_means - X)
 
-    y = ifft2(ifftshift(Y))
-
-    # Calculate the 2D Fourier Transform for the given functions
-    Y1 = fftshift(fft2(x1))
-    Y2 = fftshift(fft2(x2))
-
-    # Plotting the functions and their spectra
-    fig, axs = plt.subplots(2, 4, figsize=(12, 8))
-
-    # Plot x1
-    axs[0, 0].imshow(x1, cmap='viridis', extent=(0, N, 0, N))
-    axs[0, 0].set_title('x1(n1, n2)')
-
-    # Plot spectrum of x1
-    axs[0, 1].imshow(np.abs(Y1), cmap='viridis', extent=(0, N, 0, N))
-    axs[0, 1].set_title('Spectrum of x1')
-
-    # Plot x2
-    axs[0, 2].imshow(x2, cmap='viridis', extent=(0, N, 0, N))
-    axs[0, 2].set_title('x2(n1, n2)')
-
-    # Plot spectrum of x2
-    axs[1, 0].imshow(np.abs(Y2), cmap='viridis', extent=(0, N, 0, N))
-    axs[1, 0].set_title('Spectrum of x2')
-
-    axs[1, 1].imshow(np.abs(y), cmap='viridis', extent=(0, N, 0, N))
-    axs[1, 1].set_title('y')
-
-    # Plot predefined Y spectrum
-    axs[1, 2].imshow(np.abs(Y), cmap='viridis', extent=(0, N, 0, N))
-    axs[1, 2].set_title('Predefined Y Spectrum')
-
-    # Hide the last subplot (empty)
-    axs[1, 2].axis('off')
-
-    # Adjust layout
-    plt.tight_layout()
-
-    # Save the figure
-    plt.savefig('C:/Users/Vlad/Downloads/spectra_and_functions.png')
-
-    # Show the figure
+    # Afișarea imaginilor
+    plt.figure(figsize=(20, 7))
+    plt.subplot(1, 3, 1)
+    plt.imshow(X, cmap='gray')
+    plt.title('Original Image')
+    plt.subplot(1, 3, 2)
+    plt.imshow(X_noisy, cmap='gray')
+    plt.title('Noisy Image')
+    plt.subplot(1, 3, 3)
+    plt.imshow(X_denoised_nl_means, cmap='gray')
+    plt.title('NL Means Denoised Image')
     plt.show()
 
-
-
-
-
-
-
+    print("SNR before noise reduction:", snr_before)
+    print("SNR after NL Means noise reduction:", snr_after_nl_means)
 
 
 
