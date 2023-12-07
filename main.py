@@ -1,3 +1,4 @@
+import AutoReg
 import numpy
 import matplotlib.pyplot as plt
 import time
@@ -10,7 +11,8 @@ from scipy.signal import sawtooth, butter, filtfilt, cheby1
 import pandas as pd
 from skimage.restoration import estimate_sigma, denoise_nl_means
 import cv2
-
+from statsmodels.tsa.ar_model import AutoReg
+from sklearn.metrics import mean_squared_error
 
 #Laborator 1
 
@@ -936,41 +938,169 @@ def calculate_snr(signal, noise):
     return 20 * np.log10(mean_signal / std_noise)
 
 #3
+# if __name__ == '__main__':
+#     pixel_noise = 200
+#
+#     X = misc.face(gray=True)
+#
+#     noise = np.random.randint(-pixel_noise, high=pixel_noise + 1, size=X.shape)
+#     X_noisy = X + noise
+#
+#     # Calculul SNR înainte de eliminarea zgomotului
+#     snr_before = calculate_snr(X, X_noisy - X)
+#
+#     # Estimarea sigma zgomotului pentru Non-Local Means Denoising
+#     sigma_est = np.mean(estimate_sigma(X_noisy))
+#     # Aplicarea Non-Local Means Denoising
+#     X_denoised_nl_means = denoise_nl_means(X_noisy, h=1.15 * sigma_est, fast_mode=True,
+#                                            patch_size=5, patch_distance=6)
+#
+#     # Calculul SNR după eliminarea zgomotului cu Non-Local Means Denoising
+#     snr_after_nl_means = calculate_snr(X, X_denoised_nl_means - X)
+#
+#     # Afișarea imaginilor
+#     plt.figure(figsize=(20, 7))
+#     plt.subplot(1, 3, 1)
+#     plt.imshow(X, cmap='gray')
+#     plt.title('Original Image')
+#     plt.subplot(1, 3, 2)
+#     plt.imshow(X_noisy, cmap='gray')
+#     plt.title('Noisy Image')
+#     plt.subplot(1, 3, 3)
+#     plt.imshow(X_denoised_nl_means, cmap='gray')
+#     plt.title('NL Means Denoised Image')
+#     plt.show()
+#
+#     print("SNR before noise reduction:", snr_before)
+#     print("SNR after NL Means noise reduction:", snr_after_nl_means)
+
+
+#Lab 8
+
+def autocorrelation(time_series):
+    # Calculează vectorul de autocorelație pentru o serie de timp dată.
+    n = len(time_series)
+    mean = np.mean(time_series)
+    autocorr = np.correlate(time_series - mean, time_series - mean, mode='full') / np.var(time_series)
+    return autocorr[n-1:] / n
+
+#1 a b c d
 if __name__ == '__main__':
-    pixel_noise = 200
+    # Setează seed-ul pentru reproducibilitate
+    np.random.seed(0)
 
-    X = misc.face(gray=True)
+    # Setează parametrii
+    N = 1000  # dimensiunea seriei de timp
+    t = np.arange(N)  # indexul timpului
 
-    noise = np.random.randint(-pixel_noise, high=pixel_noise + 1, size=X.shape)
-    X_noisy = X + noise
+    # Generează componentele
+    # Componenta de trend (ecuație de gradul 2)
+    a, b, c = 0.001, 0.1, 5  # coeficienții pentru ecuația pătratică
+    trend = a * t ** 2 + b * t + c
 
-    # Calculul SNR înainte de eliminarea zgomotului
-    snr_before = calculate_snr(X, X_noisy - X)
+    # Componenta sezonieră (folosind două frecvențe)
+    freq1, freq2 = 1 / 50, 1 / 100  # frecvențele
+    season = np.sin(2 * np.pi * freq1 * t) + np.cos(2 * np.pi * freq2 * t)
 
-    # Estimarea sigma zgomotului pentru Non-Local Means Denoising
-    sigma_est = np.mean(estimate_sigma(X_noisy))
-    # Aplicarea Non-Local Means Denoising
-    X_denoised_nl_means = denoise_nl_means(X_noisy, h=1.15 * sigma_est, fast_mode=True,
-                                           patch_size=5, patch_distance=6)
+    # Zgomot alb gaussian
+    noise = np.random.normal(0, 1, N)
 
-    # Calculul SNR după eliminarea zgomotului cu Non-Local Means Denoising
-    snr_after_nl_means = calculate_snr(X, X_denoised_nl_means - X)
+    # Combina componentele pentru a forma seria de timp
+    time_series = trend + season + noise
 
-    # Afișarea imaginilor
-    plt.figure(figsize=(20, 7))
-    plt.subplot(1, 3, 1)
-    plt.imshow(X, cmap='gray')
-    plt.title('Original Image')
-    plt.subplot(1, 3, 2)
-    plt.imshow(X_noisy, cmap='gray')
-    plt.title('Noisy Image')
-    plt.subplot(1, 3, 3)
-    plt.imshow(X_denoised_nl_means, cmap='gray')
-    plt.title('NL Means Denoised Image')
+    # Desenează seria de timp și componentele sale
+    plt.figure(figsize=(14, 8))
+
+    plt.subplot(4, 1, 1)
+    plt.plot(t, time_series, label='Serie de Timp')
+    plt.title('Serie de Timp')
+    plt.legend()
+
+    plt.subplot(4, 1, 2)
+    plt.plot(t, trend, label='Trend', color='orange')
+    plt.title('Componenta de Trend')
+    plt.legend()
+
+    plt.subplot(4, 1, 3)
+    plt.plot(t, season, label='Sezonieră', color='green')
+    plt.title('Componenta Sezonieră')
+    plt.legend()
+
+    plt.subplot(4, 1, 4)
+    plt.plot(t, noise, label='Zgomot', color='red')
+    plt.title('Zgomot (Zgomot Alb Gaussian)')
+    plt.legend()
+
+    plt.tight_layout()
     plt.show()
 
-    print("SNR before noise reduction:", snr_before)
-    print("SNR after NL Means noise reduction:", snr_after_nl_means)
+
+    autocorr_vector = autocorrelation(time_series)
+
+    # Desenăm vectorul de autocorelație
+    plt.figure(figsize=(10, 5))
+    plt.stem(autocorr_vector)
+    plt.title('Vectorul de Autocorelație al Seriei de Timp')
+    plt.xlabel('Lag')
+    plt.ylabel('Autocorelație')
+    plt.show()
+
+    p = 5
+
+    # Crearea și antrenarea modelului AR
+    model_ar = AutoReg(time_series, lags=p)
+    model_ar_fit = model_ar.fit()
+
+    # Obținerea predicțiilor
+    predictions = model_ar_fit.predict(start=p, end=N - 1, dynamic=False)
+
+    # Desenăm seria de timp originală și predicțiile
+    plt.figure(figsize=(14, 6))
+    plt.plot(time_series, label='Serie de Timp Originală', color='blue')
+    plt.plot(range(p, N), predictions, label='Predicții AR', color='red', linestyle='dashed')
+    plt.title('Serie de Timp și Predicțiile Modelului AR')
+    plt.legend()
+    plt.show()
+
+
+
+
+
+    # Împarte datele în seturi de antrenament și testare
+    train_size = int(N * 0.8)
+    train, test = time_series[:train_size], time_series[train_size:]
+
+    # Căutarea în grilă pentru cei mai buni parametri p și m (întârzieri și orizont de predicție)
+    p_values = range(1, 11)  # interval pentru p
+    m_values = range(1, 6)  # interval pentru m
+    best_score, best_cfg = float("inf"), None
+
+    for p in p_values:
+        for m in m_values:
+            # Antrenează modelul AR
+            model = AutoReg(train, lags=p)
+            model_fit = model.fit()
+
+            # Face predicții
+            predictions = model_fit.predict(start=len(train), end=len(train) + len(test) - 1, dynamic=False)
+
+            # Folosește doar primele m predicții
+            predictions = predictions[:m]
+
+            # Calculează eroarea
+            error = mean_squared_error(test[:m], predictions)
+            if error < best_score:
+                best_score, best_cfg = error, (p, m)
+            print(f'AR({p}) Predict {m} pasi: MSE={error:.3f}')
+
+    print(f'Cea mai bună configurație AR(p) Predict(m) pasi: {best_cfg} cu MSE={best_score:.3f}')
+
+
+
+
+
+
+
 
 
 
