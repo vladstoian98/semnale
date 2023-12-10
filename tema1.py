@@ -254,7 +254,6 @@ if __name__ == '__main__':
             break
 
     video.release()
-    out.release()
     cv2.destroyAllWindows()
 
 
