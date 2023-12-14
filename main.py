@@ -1,4 +1,5 @@
 import AutoReg
+from statsmodels.tsa.arima.model import ARIMA
 import numpy
 import matplotlib.pyplot as plt
 import time
@@ -985,21 +986,133 @@ def autocorrelation(time_series):
     return autocorr[n-1:] / n
 
 #1 a b c d
+# if __name__ == '__main__':
+#     # Setează seed-ul pentru reproducibilitate
+#     np.random.seed(0)
+#
+#     # Setează parametrii
+#     N = 1000  # dimensiunea seriei de timp
+#     t = np.arange(N)  # indexul timpului
+#
+#     # Generează componentele
+#     # Componenta de trend (ecuație de gradul 2)
+#     a, b, c = 0.001, 0.1, 5  # coeficienții pentru ecuația pătratică
+#     trend = a * t ** 2 + b * t + c
+#
+#     # Componenta sezonieră (folosind două frecvențe)
+#     freq1, freq2 = 1 / 50, 1 / 100  # frecvențele
+#     season = np.sin(2 * np.pi * freq1 * t) + np.cos(2 * np.pi * freq2 * t)
+#
+#     # Zgomot alb gaussian
+#     noise = np.random.normal(0, 1, N)
+#
+#     # Combina componentele pentru a forma seria de timp
+#     time_series = trend + season + noise
+#
+#     # Desenează seria de timp și componentele sale
+#     plt.figure(figsize=(14, 8))
+#
+#     plt.subplot(4, 1, 1)
+#     plt.plot(t, time_series, label='Serie de Timp')
+#     plt.title('Serie de Timp')
+#     plt.legend()
+#
+#     plt.subplot(4, 1, 2)
+#     plt.plot(t, trend, label='Trend', color='orange')
+#     plt.title('Componenta de Trend')
+#     plt.legend()
+#
+#     plt.subplot(4, 1, 3)
+#     plt.plot(t, season, label='Sezonieră', color='green')
+#     plt.title('Componenta Sezonieră')
+#     plt.legend()
+#
+#     plt.subplot(4, 1, 4)
+#     plt.plot(t, noise, label='Zgomot', color='red')
+#     plt.title('Zgomot (Zgomot Alb Gaussian)')
+#     plt.legend()
+#
+#     plt.tight_layout()
+#     plt.show()
+#
+#
+#     autocorr_vector = autocorrelation(time_series)
+#
+#     # Desenăm vectorul de autocorelație
+#     plt.figure(figsize=(10, 5))
+#     plt.stem(autocorr_vector)
+#     plt.title('Vectorul de Autocorelație al Seriei de Timp')
+#     plt.xlabel('Lag')
+#     plt.ylabel('Autocorelație')
+#     plt.show()
+#
+#     p = 5
+#
+#     # Crearea și antrenarea modelului AR
+#     model_ar = AutoReg(time_series, lags=p)
+#     model_ar_fit = model_ar.fit()
+#
+#     # Obținerea predicțiilor
+#     predictions = model_ar_fit.predict(start=p, end=N - 1, dynamic=False)
+#
+#     # Desenăm seria de timp originală și predicțiile
+#     plt.figure(figsize=(14, 6))
+#     plt.plot(time_series, label='Serie de Timp Originală', color='blue')
+#     plt.plot(range(p, N), predictions, label='Predicții AR', color='red', linestyle='dashed')
+#     plt.title('Serie de Timp și Predicțiile Modelului AR')
+#     plt.legend()
+#     plt.show()
+#
+#
+#
+#
+#
+#     # Împarte datele în seturi de antrenament și testare
+#     train_size = int(N * 0.8)
+#     train, test = time_series[:train_size], time_series[train_size:]
+#
+#     # Căutarea în grilă pentru cei mai buni parametri p și m (întârzieri și orizont de predicție)
+#     p_values = range(1, 11)  # interval pentru p
+#     m_values = range(1, 6)  # interval pentru m
+#     best_score, best_cfg = float("inf"), None
+#
+#     for p in p_values:
+#         for m in m_values:
+#             # Antrenează modelul AR
+#             model = AutoReg(train, lags=p)
+#             model_fit = model.fit()
+#
+#             # Face predicții
+#             predictions = model_fit.predict(start=len(train), end=len(train) + len(test) - 1, dynamic=False)
+#
+#             # Folosește doar primele m predicții
+#             predictions = predictions[:m]
+#
+#             # Calculează eroarea
+#             error = mean_squared_error(test[:m], predictions)
+#             if error < best_score:
+#                 best_score, best_cfg = error, (p, m)
+#             print(f'AR({p}) Predict {m} pasi: MSE={error:.3f}')
+#
+#     print(f'Cea mai bună configurație AR(p) Predict(m) pasi: {best_cfg} cu MSE={best_score:.3f}')
+
+#Lab9
+#Ex1,2,3
 if __name__ == '__main__':
-    # Setează seed-ul pentru reproducibilitate
+    # Seteaza seed-ul pentru reproducibilitate
     np.random.seed(0)
 
-    # Setează parametrii
-    N = 1000  # dimensiunea seriei de timp
-    t = np.arange(N)  # indexul timpului
+    # Seteaza parametrii
+    N = 1000  # Dimensiunea seriei de timp
+    t = np.arange(N)  # Indexul timpului
 
-    # Generează componentele
-    # Componenta de trend (ecuație de gradul 2)
-    a, b, c = 0.001, 0.1, 5  # coeficienții pentru ecuația pătratică
+    # Genereaza componentele
+    # Componenta de trend (ecuatie de gradul 2)
+    a, b, c = 0.001, 0.1, 5  # Coeficientii pentru ecuatia patratica
     trend = a * t ** 2 + b * t + c
 
-    # Componenta sezonieră (folosind două frecvențe)
-    freq1, freq2 = 1 / 50, 1 / 100  # frecvențele
+    # Componenta sezoniera (folosind doua frecvente)
+    freq1, freq2 = 1 / 50, 1 / 100  # Frecventele
     season = np.sin(2 * np.pi * freq1 * t) + np.cos(2 * np.pi * freq2 * t)
 
     # Zgomot alb gaussian
@@ -1008,92 +1121,76 @@ if __name__ == '__main__':
     # Combina componentele pentru a forma seria de timp
     time_series = trend + season + noise
 
-    # Desenează seria de timp și componentele sale
+
+    # Functia pentru Medierea Exponentiala (EMA)
+    def exponential_moving_average(data, alpha):
+        ema = np.zeros_like(data)
+        ema[0] = data[0]
+        for i in range(1, len(data)):
+            ema[i] = alpha * data[i] + (1 - alpha) * ema[i - 1]
+        return ema
+
+
+    # Calculeaza EMA cu un alpha fix
+    alpha_fixed = 0.1
+    ema_fixed = exponential_moving_average(time_series, alpha_fixed)
+
+
+    # Gaseste un alpha optim
+    # Pentru simplitate, folosim eroarea patratica medie (MSE) fata de componenta de trend
+    # ca masura a cat de bine EMA capteaza trendul subiacent.
+    def mse(y_true, y_pred):
+        return np.mean((y_true - y_pred) ** 2)
+
+
+    alphas = np.linspace(0, 1, 100)
+    optimal_alpha = alphas[0]
+    lowest_mse = mse(trend, exponential_moving_average(time_series, alphas[0]))
+
+    for alpha in alphas[1:]:
+        current_ema = exponential_moving_average(time_series, alpha)
+        current_mse = mse(trend, current_ema)
+        if current_mse < lowest_mse:
+            lowest_mse = current_mse
+            optimal_alpha = alpha
+
+    ema_optimal = exponential_moving_average(time_series, optimal_alpha)
     plt.figure(figsize=(14, 8))
 
-    plt.subplot(4, 1, 1)
-    plt.plot(t, time_series, label='Serie de Timp')
-    plt.title('Serie de Timp')
+    # Plotează seria de timp
+    plt.plot(t, time_series, label='Serie de Timp', color='black', linewidth=2)
+
+    # Plotează EMA fixat și EMA optimizat cu linii punctate
+    plt.plot(t, ema_fixed, label=f'EMA Fixat (α = 0.1)', color='purple', linestyle='dotted')
+    plt.plot(t, ema_optimal, label=f'EMA Optim (α = {optimal_alpha:.2f})', color='yellow', linestyle='dotted')
+
+    plt.title('Comparare între Seria de Timp, EMA Fixat și EMA Optimizat')
     plt.legend()
 
-    plt.subplot(4, 1, 2)
-    plt.plot(t, trend, label='Trend', color='orange')
-    plt.title('Componenta de Trend')
-    plt.legend()
-
-    plt.subplot(4, 1, 3)
-    plt.plot(t, season, label='Sezonieră', color='green')
-    plt.title('Componenta Sezonieră')
-    plt.legend()
-
-    plt.subplot(4, 1, 4)
-    plt.plot(t, noise, label='Zgomot', color='red')
-    plt.title('Zgomot (Zgomot Alb Gaussian)')
-    plt.legend()
-
-    plt.tight_layout()
-    plt.show()
-
-
-    autocorr_vector = autocorrelation(time_series)
-
-    # Desenăm vectorul de autocorelație
-    plt.figure(figsize=(10, 5))
-    plt.stem(autocorr_vector)
-    plt.title('Vectorul de Autocorelație al Seriei de Timp')
-    plt.xlabel('Lag')
-    plt.ylabel('Autocorelație')
-    plt.show()
-
-    p = 5
-
-    # Crearea și antrenarea modelului AR
-    model_ar = AutoReg(time_series, lags=p)
-    model_ar_fit = model_ar.fit()
-
-    # Obținerea predicțiilor
-    predictions = model_ar_fit.predict(start=p, end=N - 1, dynamic=False)
-
-    # Desenăm seria de timp originală și predicțiile
-    plt.figure(figsize=(14, 6))
-    plt.plot(time_series, label='Serie de Timp Originală', color='blue')
-    plt.plot(range(p, N), predictions, label='Predicții AR', color='red', linestyle='dashed')
-    plt.title('Serie de Timp și Predicțiile Modelului AR')
-    plt.legend()
     plt.show()
 
 
 
+    # Setam orizontul q pentru modelul Moving Average (MA)
+    q = 5
+
+    # Cream modelul MA folosind seria de timp si orizontul q specificat
+    # Pentru un model MA pur, setam p (AR) = 0 si d (diferentiere) = 0
+    model_ma = ARIMA(time_series, order=(0, 0, q))
+    model_ma_fit = model_ma.fit()
+
+    # Obtinem predictiile modelului MA
+    ma_predictions = model_ma_fit.predict(start=0, end=N - 1)
+
+    # Ploteaza seria de timp si predictiile modelului MA
+    plt.figure(figsize=(14, 8))
+    plt.plot(time_series, label='Serie de Timp Originala', color='black')
+    plt.plot(ma_predictions, label=f'Model MA (q={q})', color='red', linestyle='dashed')
+    plt.title(f'Seria de Timp si Predictiile Modelului MA (q={q})')
+    plt.legend()
+    plt.show()
 
 
-    # Împarte datele în seturi de antrenament și testare
-    train_size = int(N * 0.8)
-    train, test = time_series[:train_size], time_series[train_size:]
-
-    # Căutarea în grilă pentru cei mai buni parametri p și m (întârzieri și orizont de predicție)
-    p_values = range(1, 11)  # interval pentru p
-    m_values = range(1, 6)  # interval pentru m
-    best_score, best_cfg = float("inf"), None
-
-    for p in p_values:
-        for m in m_values:
-            # Antrenează modelul AR
-            model = AutoReg(train, lags=p)
-            model_fit = model.fit()
-
-            # Face predicții
-            predictions = model_fit.predict(start=len(train), end=len(train) + len(test) - 1, dynamic=False)
-
-            # Folosește doar primele m predicții
-            predictions = predictions[:m]
-
-            # Calculează eroarea
-            error = mean_squared_error(test[:m], predictions)
-            if error < best_score:
-                best_score, best_cfg = error, (p, m)
-            print(f'AR({p}) Predict {m} pasi: MSE={error:.3f}')
-
-    print(f'Cea mai bună configurație AR(p) Predict(m) pasi: {best_cfg} cu MSE={best_score:.3f}')
 
 
 
