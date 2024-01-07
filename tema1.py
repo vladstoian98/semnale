@@ -37,6 +37,14 @@ def idct_2d(image):
 #         [72, 92, 95, 98, 112, 100, 103, 99]
 #     ])
 #
+#     # Imaginea este împărțită în blocuri de 8x8 pixeli. Pentru fiecare bloc:
+#     #
+#     # Se aplică DCT.
+#     # Se cuantizează coeficienții DCT (se împarte și se înmulțește cu Q_jpeg).
+#     #
+#     # Se aplică IDCT pentru a obține blocul reconstruit.
+#     # Blocul reconstruit este plasat înapoi în imaginea finală.
+#
 #     # Procesam imaginea bloc cu bloc
 #     jpeg_img = np.zeros_like(img, dtype=np.float32)
 #     for i in range(0, h, block_size):
@@ -69,6 +77,8 @@ def idct_2d(image):
 
 
 # Conversia din RGB in Y'CbCr
+# Aceasta functie convertește o imagine din spațiul de culoare RGB (Red, Green, Blue) in YCbCr. Y reprezintă componenta de luminozitate,
+# iar Cb si Cr sunt componente de crominanță. Conversia se face folosind formula standard de conversie.
 def rgb_to_ycbcr(img):
     Y = 0.299 * img[:, :, 0] + 0.587 * img[:, :, 1] + 0.114 * img[:, :, 2]
     Cb = -0.1687 * img[:, :, 0] - 0.3313 * img[:, :, 1] + 0.5 * img[:, :, 2] + 128
@@ -77,6 +87,7 @@ def rgb_to_ycbcr(img):
 
 
 # Conversia din Y'CbCr in RGB
+# Aceasta functie face conversia inversa, de la YCbCr la RGB. Se folosesc formulele standard pentru aceasta conversie.
 def ycbcr_to_rgb(img):
     R = img[:, :, 0] + 1.402 * (img[:, :, 2] - 128)
     G = img[:, :, 0] - 0.344136 * (img[:, :, 1] - 128) - 0.714136 * (img[:, :, 2] - 128)
@@ -99,7 +110,7 @@ def calculate_mse(image1, image2):
     return np.mean((image1 - image2) ** 2)
 
 
-def adjust_quantization_matrix(matrix, current_mse, mse_threshold, adjustment_factor=1.5):
+def adjust_quantization_matrix(matrix, current_mse, mse_threshold, adjustment_factor=3):
     # Creștem factorul de cuantizare doar dacă MSE-ul actual este sub prag
     # Aceasta va crește nivelul de compresie (și potențial MSE-ul)
     if current_mse < mse_threshold:
@@ -122,6 +133,8 @@ def adjust_quantization_matrix(matrix, current_mse, mse_threshold, adjustment_fa
 #         [49, 64, 78, 87, 103, 121, 120, 101],
 #         [72, 92, 95, 98, 112, 100, 103, 99]
 #     ])
+#
+#     Q_jpeg = Q_jpeg * 15;
 #
 #     # Aplicam transformarea pe imaginea color
 #     img_ycbcr = rgb_to_ycbcr(img_color)
@@ -223,38 +236,38 @@ def process_frame(frame, block_size, quant_matrix):
     return ycbcr_to_rgb(compressed_frame)
 
 
-if __name__ == '__main__':
-    # Deschide clipul video
-    video = cv2.VideoCapture('C:/Users/Vlad/Downloads/people.mp4')
-
-    block_size = 8
-
-    Q_jpeg = np.array([
-        [16, 11, 10, 16, 24, 40, 51, 61],
-        [12, 12, 14, 19, 26, 28, 60, 55],
-        [14, 13, 16, 24, 40, 57, 69, 56],
-        [14, 17, 22, 29, 51, 87, 80, 62],
-        [18, 22, 37, 56, 68, 109, 103, 77],
-        [24, 35, 55, 64, 81, 104, 113, 92],
-        [49, 64, 78, 87, 103, 121, 120, 101],
-        [72, 92, 95, 98, 112, 100, 103, 99]
-    ])
-
-    while True:
-        ret, frame = video.read()
-        if not ret:
-            break
-
-        # Procesează cadrul
-        compressed_frame = process_frame(frame, block_size, Q_jpeg)
-
-        # Afișează cadrul comprimat (sau salvează-l)
-        cv2.imshow('Compressed Frame', compressed_frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    video.release()
-    cv2.destroyAllWindows()
+# if __name__ == '__main__':
+#     # Deschide clipul video
+#     video = cv2.VideoCapture('C:/Users/Vlad/Downloads/people.mp4')
+#
+#     block_size = 8
+#
+#     Q_jpeg = np.array([
+#         [16, 11, 10, 16, 24, 40, 51, 61],
+#         [12, 12, 14, 19, 26, 28, 60, 55],
+#         [14, 13, 16, 24, 40, 57, 69, 56],
+#         [14, 17, 22, 29, 51, 87, 80, 62],
+#         [18, 22, 37, 56, 68, 109, 103, 77],
+#         [24, 35, 55, 64, 81, 104, 113, 92],
+#         [49, 64, 78, 87, 103, 121, 120, 101],
+#         [72, 92, 95, 98, 112, 100, 103, 99]
+#     ])
+#
+#     while True:
+#         ret, frame = video.read()
+#         if not ret:
+#             break
+#
+#         # Procesează cadrul
+#         compressed_frame = process_frame(frame, block_size, Q_jpeg)
+#
+#         # Afișează cadrul comprimat (sau salvează-l)
+#         cv2.imshow('Compressed Frame', compressed_frame)
+#         if cv2.waitKey(1) & 0xFF == ord('q'):
+#             break
+#
+#     video.release()
+#     cv2.destroyAllWindows()
 
 
 
