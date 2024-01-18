@@ -134,9 +134,12 @@ if __name__ == '__main__':
                 x = int(i * scale_factor)
                 y = int(j * scale_factor)
 
-                # Calculam diferenta dintre pozitia (x, y) calculata si pozitia (x, y) reala
+                # Calculam diferenta dintre pozitia (x, y) calculata si pozitia (x, y) reala;
+                # ne ajuta sa intelegem distanta de la pozitia calculata in poza originala la pozitia din poza redimensionata
                 x_diff = (i * scale_factor) - x
                 y_diff = (j * scale_factor) - y
+
+                print(x_diff)
 
                 if x + 1 < height and y + 1 < width:
                     # Calculeaza valoarea interpolata biliniar folosind cele patru puncte vecine
